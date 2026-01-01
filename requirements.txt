@@ -1,0 +1,28 @@
+openai==1.17.0
+neo4j==5.17.0
+pymilvus==2.3.6
+minio==7.2.5
+python-dotenv==1.0.1
+PyYAML==6.0.1
+transformers==4.38.2
+torch==2.1.2
+jinja2==3.1.3
+celery[redis]==5.3.6
+# 修正：将urllib3固定在2.0以下以兼容旧版requests
+urllib3<2.0
+requests==2.31.0
+numpy==1.26.4
+sentence-transformers==2.6.1
+# flask不再是核心依赖，移除
+vllm==0.4.0
+tiktoken==0.6.0
+tqdm==4.66.2
+pandas==2.2.1
+scikit-learn==1.4.1.post1
+accelerate==0.28.0
+fastapi==0.110.0
+uvicorn[standard]==0.28.0
+# Pydantic版本需要与FastAPI和vLLM兼容
+pydantic==2.6.4
+lxml==5.1.0
+redis==5.0.3

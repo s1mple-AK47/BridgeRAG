@@ -1,0 +1,14 @@
+第一步：先搞docker，把需要的环境先pull下来，如milvus、neo4j。具体的格式要么去github官网要么上docker官网上看。
+        （不能纯信LLM）。deployments/docker/standalone/docker-compose.yml
+        文件：docker-compose.yml
+        操作：sudo docker compose up -d
+第二步：配置 .env 和 configs/config.yaml， 定义基础配置，如数据库的端口和默认密码。
+        其中 .env 文件是绝对不能让别人看到的信息，只能由开发者知道，如数据库的登录信息
+        configs/config.yaml 则是一些代码的基础配置信息，比如大模型的名字等等
+第三步：bridgerag/config.py: 编写代码来加载上面两个文件的配置,供之后的其他代码使用。
+        一个用于加载和提供项目配置的单例类。
+        它会从 .env 文件和 configs/config.yaml 文件中加载配置
+第四步：requirements.txt: 列出所有初始依赖包 (fastapi, uvicorn, neo4j, pymilvus, minio, python-dotenv, pyyaml, transformers, torch等)。
+第五步：notebooks/01_test_db_connections.ipynb: 在动手写正式代码前，先用Notebook验证一切！ 
+        在这里，你应该尝试编写代码，使用neo4j、pymilvus和minio客户端库，连接到你用Docker Compose启动的服务。
+        只有这里成功了，才能进行下一步。

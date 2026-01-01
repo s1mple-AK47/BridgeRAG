@@ -1,0 +1,77 @@
+# configs/config.yaml
+
+# 语言模型相关配置
+llm:
+  # LLM API的类型，可选值为 'vllm' 或 'siliconflow'
+  # 'vllm': 使用本地部署的vLLM服务
+  # 'siliconflow': 使用硅基流动的云端API服务
+  llm_api_type: "vllm"
+  
+  # 嵌入模型API的类型，可选值为 'api' 或 'local'
+  # 'api': 使用远程API服务 (如 vLLM 或 硅基流动)
+  # 'local': 在本地使用CPU/GPU加载SentenceTransformer模型
+  embedding_api_type: "api"
+
+  # --- vLLM 本地服务配置 ---
+  # 用于本地加载的嵌入模型路径 (当 embedding_api_type 为 'local' 时使用)
+  local_embedding_model_path: "/home/pangu/gxa_main/LLM_Model/nomic_v1.5/nomic-embed-text-v1.5"
+  # 用于vLLM API的嵌入模型名称 (当 embedding_api_type 为 'api' 且后端为vLLM时使用)
+  vllm_embedding_model_name: "nomic-embed-text-v1.5"
+  # 用于vLLM的生成模型名称或本地路径
+  vllm_generation_model_name: "Qwen2.5-14B"
+  vllm_tokenizer_path: "/home/pangu/gxa_main/LLM_Model/Qwen2.5-14B-Instruct"
+  # vLLM (或其他推理服务) 的主机名和端口
+  vllm_host: "localhost"
+  vllm_port: 8988
+  vllm_embedding_host: "localhost"
+  vllm_embedding_port: 8999
+
+  # --- 硅基流动 API 配置 ---
+  # 硅基流动API的根URL
+  siliconflow_api_base: "https://api.siliconflow.cn/v1"
+  # 在硅基流动平台上使用的生成模型名称
+  siliconflow_generation_model_name: "Qwen/Qwen2-7B-Instruct"
+  # 在硅基流动平台上使用的嵌入模型名称
+  siliconflow_embedding_model_name: "nomic-ai/nomic-embed-text-v1.5"
+
+
+# 数据库和集合相关配置
+database:
+  # Milvus/Zilliz 中的集合（Collection）名称
+  chunk_collection_name: "bridgerag_chunks"
+  entity_collection_name: "bridgerag_entities"
+  summary_collection_name: "bridgerag_summaries"
+  # MinIO 中用于存放原始文档的桶（Bucket）名称
+  minio_bucket_name: "a-bucket"
+
+# 数据处理流程相关配置
+processing:
+  # 嵌入模型产生的向量维度
+  embedding_dimension: 768
+  # 切分文档时的文本块大小
+  text_chunk_size: 512
+  overlap_token_size: 32
+
+# Milvus 集合名称
+milvus_collections:
+
+# For routing service, to rerank the recalled documents from graph and vector databases
+RERANK_TOP_K: 10
+
+# For retrieval service, to limit the expansion of entities with 'same_as' relationship
+SAME_AS_ENTITY_EXPANSION_LIMIT: 5
+
+# For retrieval service, to limit the number of chunks retrieved for each document
+CHUNK_RETRIEVAL_LIMIT: 2
+
+# For synthesis service, to control the answer generation process
+MAX_SYNTHESIS_ATTEMPTS: 3
+
+# Milvus 集合字段的最大长度配置
+database_schema:
+  # 文本块内容字段的最大长度
+  chunk_max_length: 16384
+  # 实体摘要字段的最大长度
+  entity_summary_max_length: 8000
+  # 文档摘要字段的最大长度
+  summary_max_length: 15000

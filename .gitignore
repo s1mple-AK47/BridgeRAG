@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Data files (large datasets)
+data/
+datas/
+*.jsonl
+*.json
+!configs/*.yaml
+!configs/*.json
+
+# Docker images and large files
+docker/*.tar
+docker/*.whl
+docker/*.gz
+
+# Database data (generated at runtime)
+data/etcd/
+data/milvus/
+data/minio/
+data/neo4j/
+data/redis/
+
+# Downloaded/generated content
+downloaded_articles/
+
+# Test outputs
+test_results.jsonl
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak

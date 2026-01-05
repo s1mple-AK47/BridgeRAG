@@ -1,91 +1,91 @@
 # BridgeRAG
 
-基于知识图谱的检索增强生成系统，支持多跳问答。
+A knowledge graph-based Retrieval-Augmented Generation system for multi-hop question answering.
 
-## 架构概览
+## Architecture Overview
 
 ```
-离线阶段: 文档 → 分块 → 实体/关系提取 → 知识融合 → 存储 → 实体链接
-在线阶段: 问题 → 路由 → 推理 → 检索 → 综合 → 答案
+Offline: Documents → Chunking → Entity/Relation Extraction → Knowledge Fusion → Storage → Entity Linking
+Online:  Question → Routing → Reasoning → Retrieval → Synthesis → Answer
 ```
 
-## 依赖服务
+## Dependencies
 
-- Neo4j: 知识图谱存储
-- Milvus: 向量数据库
-- MinIO: 原始文档存储
-- vLLM: 本地大模型推理服务
+- Neo4j: Knowledge graph storage
+- Milvus: Vector database
+- MinIO: Raw document storage
+- vLLM: Local LLM inference service
 
-## 快速开始
+## Quick Start
 
-### 1. 启动依赖服务
+### 1. Start Services
 
 ```bash
 docker-compose up -d
 ```
 
-### 2. 配置环境
+### 2. Configure Environment
 
-复制并编辑配置文件：
+Copy and edit configuration files:
 ```bash
 cp .env.example .env
-# 编辑 .env 设置数据库连接信息
+# Edit .env to set database connection info
 
-# 编辑 configs/config.yaml 设置模型路径等
+# Edit configs/config.yaml to set model paths, etc.
 ```
 
-### 3. 初始化数据库
+### 3. Initialize Databases
 
 ```bash
 python scripts/initialize_databases.py
 ```
 
-### 4. 准备数据
+### 4. Prepare Data
 
-数据格式 (`hotpot_docs.jsonl`):
+Data format (`hotpot_docs.jsonl`):
 ```json
-{"id": "文档标题", "text": "文档内容"}
+{"id": "document_title", "text": "document_content"}
 ```
 
-如果使用 HotpotQA 数据集，先转换格式：
+For HotpotQA dataset, convert format first:
 ```bash
 python scripts/convert_hotpot_data.py
 ```
 
-### 5. 运行离线流水线
+### 5. Run Offline Pipeline
 
 ```bash
 python scripts/run_offline_pipeline_multiprocess.py
 ```
 
-支持断点续传，中断后重新运行会跳过已处理的文档。
+Supports checkpoint resume - rerunning will skip already processed documents.
 
-### 6. 实体链接（可选）
+### 6. Entity Linking (Optional)
 
-在离线处理完成后，运行实体链接以建立跨文档的实体关联：
+After offline processing, run entity linking to establish cross-document entity associations:
 ```bash
 python scripts/run_entity_linking.py
 ```
 
-### 7. 在线查询
+### 7. Online Query
 
-单条查询测试：
+Single query test:
 ```bash
 python scripts/run_online_query.py
 ```
 
-批量评测：
+Batch evaluation:
 ```bash
 python scripts/run_online_query_benchmark_hotpot.py
 ```
 
-## 配置说明
+## Configuration
 
 ### configs/config.yaml
 
 ```yaml
 llm:
-  llm_api_type: "vllm"           # vllm 或 siliconflow
+  llm_api_type: "vllm"           # vllm or siliconflow
   vllm_host: "localhost"
   vllm_port: 8989
   vllm_generation_model_name: "Qwen2.5-14B"
@@ -111,30 +111,30 @@ MINIO_SECRET_KEY=minioadmin
 MILVUS_URI=http://localhost:19530
 ```
 
-## 脚本说明
+## Scripts Reference
 
-| 脚本 | 功能 |
-|------|------|
-| `initialize_databases.py` | 初始化 Milvus 集合和 Neo4j 索引 |
-| `convert_hotpot_data.py` | 转换 HotpotQA 数据格式 |
-| `run_offline_pipeline_multiprocess.py` | 多进程离线处理流水线 |
-| `run_entity_linking.py` | 跨文档实体链接 |
-| `run_online_query.py` | 单条在线查询 |
-| `run_online_query_benchmark_hotpot.py` | 批量查询评测 |
-| `sync_log_from_milvus.py` | 从 Milvus 同步已处理文档日志 |
+| Script | Description |
+|--------|-------------|
+| `initialize_databases.py` | Initialize Milvus collections and Neo4j indexes |
+| `convert_hotpot_data.py` | Convert HotpotQA data format |
+| `run_offline_pipeline_multiprocess.py` | Multi-process offline processing pipeline |
+| `run_entity_linking.py` | Cross-document entity linking |
+| `run_online_query.py` | Single online query |
+| `run_online_query_benchmark_hotpot.py` | Batch query evaluation |
+| `sync_log_from_milvus.py` | Sync processed document log from Milvus |
 
-## 性能调优
+## Performance Tuning
 
-### 离线处理并发数
+### Offline Processing Concurrency
 
-编辑 `scripts/run_offline_pipeline_multiprocess.py`:
+Edit `scripts/run_offline_pipeline_multiprocess.py`:
 ```python
-NUM_WORKERS = 4  # 根据 CPU/GPU 资源调整
+NUM_WORKERS = 4  # Adjust based on CPU/GPU resources
 ```
 
-### Neo4j 写入优化
+### Neo4j Write Optimization
 
-确保已创建索引（`initialize_databases.py` 会自动创建）：
+Ensure indexes are created (`initialize_databases.py` creates them automatically):
 ```cypher
 CREATE INDEX entity_id_index IF NOT EXISTS FOR (e:Entity) ON (e.entity_id);
 CREATE INDEX entity_name_index IF NOT EXISTS FOR (e:Entity) ON (e.name);
